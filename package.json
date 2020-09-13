@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc",
         "pretest": "npm run build",
-        "test": "protractor protractor.conf.js"
+        "test": "protractor protractor.conf.js",
+        "test-ci": "protractor --capabilities.chromeOptions.args=--headless --capabilities.chromeOptions.args=--no-sandbox protractor.conf.js"
     },
     "keywords": [],
     "author": "",

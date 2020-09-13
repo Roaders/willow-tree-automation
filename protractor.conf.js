@@ -15,13 +15,15 @@ const seleniumJar = path.join(seleniumJarPath + seleniumJarDir[0]);
 const chromeDriverMain = require.resolve("chromedriver");
 const chromeDriverBinary = path.join(path.dirname(chromeDriverMain), "chromedriver", "chromedriver" + (process.platform.startsWith("win") ? ".exe" : ""));
 
+process.env.CHROME_BIN = process.env.CHROME_BIN || require('puppeteer').executablePath();
+
 exports.config = {
     framework: 'jasmine',
     specs: ['./dist/*.spec.js'],
     capabilities: {
         browserName: 'chrome',
         chromeOptions: {
-            binary: require("puppeteer").executablePath()
+            binary: process.env.CHROME_BIN
         }
     },
     directConnect: true,
