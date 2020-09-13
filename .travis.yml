@@ -1,3 +1,11 @@
 language: node_js
 node_js: 12
 script: npm run test-ci
+
+notifications:
+  email:
+    recipients:
+      - giles.roadnight@gmail.com
+      - lindsay.roadnight@gmail.com
+    on_success: always
+    on_failure: always
