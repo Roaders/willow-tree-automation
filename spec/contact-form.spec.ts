@@ -36,9 +36,9 @@ describe("contact pages", () => {
         it(`${test.heading} should successfully submit the contact form`, async () => {
             await browser.driver.get(url);
 
-            await browser.driver.findElement(By.id("wpforms-124-field_0")).sendKeys("Travis");
+            await browser.driver.findElement(By.id("wpforms-124-field_0")).sendKeys("Automation");
             await browser.driver.findElement(By.id("wpforms-124-field_0-last")).sendKeys("Tester");
-            await browser.driver.findElement(By.id("wpforms-124-field_1")).sendKeys("travis.tester@willow-tree-counselling.co.uk");
+            await browser.driver.findElement(By.id("wpforms-124-field_1")).sendKeys("giles.roadnight@gmail.com");
             await browser.driver.findElement(By.id("wpforms-124-field_2")).sendKeys(`Testing contact form on page ${test.heading}`);
 
             await browser.driver.findElement(By.id("wpforms-submit-124")).click();
