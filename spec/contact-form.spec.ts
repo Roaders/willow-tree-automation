@@ -8,7 +8,7 @@ describe("contact pages", () => {
         { url: "", heading: "Welcome", title: "Welcome - Willow Tree Counselling", contactForm: true },
         { url: "/lindsay-roadnight", heading: "Lindsay Roadnight", title: "Lindsay Roadnight - Willow Tree Counselling" },
         { url: "/fees-and-location", heading: "Fees and Location", title: "Fees and Location - Willow Tree Counselling" },
-        { url: "/business-support", heading: "Business Support", title: "Business Support - Willow Tree Counselling" },
+        { url: "/business-support", heading: "Corporate", title: "Corporate - Willow Tree Counselling" },
         { url: "/contact", heading: "Contact", title: "Contact - Willow Tree Counselling", contactForm: true },
         { url: "/blog", heading: "Blog", title: "Blog - Willow Tree Counselling", className: "page-title" },
         { url: "/faqs", heading: "FAQs", title: "FAQs - Willow Tree Counselling" },
