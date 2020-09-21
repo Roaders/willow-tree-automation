@@ -12,6 +12,7 @@ describe("contact pages", () => {
         { url: "/contact", heading: "Contact", title: "Contact - Willow Tree Counselling", contactForm: true },
         { url: "/blog", heading: "Blog", title: "Blog - Willow Tree Counselling", className: "page-title" },
         { url: "/faqs", heading: "FAQs", title: "FAQs - Willow Tree Counselling" },
+        { url: "/covid-19", heading: "COVID-19", title: "COVID-19 - Willow Tree Counselling" },
     ];
 
     tests.forEach(test => {
