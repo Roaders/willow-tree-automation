@@ -34,7 +34,7 @@ describe("contact pages", () => {
     tests.filter(test => test.contactForm === true).forEach(test => {
         const url = `${baseUrl}${test.url}`;
 
-        it(`${test.heading} should successfully submit the contact form`, async () => {
+        it(`${test.heading} should successfully fill out the contact form`, async () => {
             await browser.driver.get(url);
 
             await browser.driver.findElement(By.id("wpforms-124-field_0")).sendKeys("Automation");
@@ -44,12 +44,14 @@ describe("contact pages", () => {
 
             await browser.driver.findElement(By.id("wpforms-submit-124")).click();
 
-            const confirmationChildren = await browser.driver.findElement(By.id("wpforms-confirmation-124")).findElements(By.tagName("div"));
-            const confirmationGrandChildren = await confirmationChildren[0].findElements(By.tagName("div"));
+            const iframes = await browser.driver.findElements(By.tagName("iframe"));
+            const capatchaIframe = iframes[iframes.length - 1];
+            
+            const src = await capatchaIframe.getAttribute("src");
+            expect(src.indexOf("https://www.google.com/recaptcha")).toBe(0);
+            const tagName = await capatchaIframe.getTagName();
+            expect(tagName).toBe("iframe");
 
-            const confirmText = await confirmationGrandChildren[0].getText();
-
-            expect(confirmText).toBe("Thank you for contacting us.");
         })
     })
 });
