@@ -71,16 +71,19 @@ describe("contact pages", () => {
 
     describe("contact form", () => {
         let originalTimeout: number;
+        const overriddenTimeout = 60000;
         beforeEach(() => {
+            console.log(`Setting timeout to ${overriddenTimeout}`)
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-            jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = overriddenTimeout;
         });
 
         afterEach(() => {
+            console.log(`Resetting timeout to ${originalTimeout}`);
             jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
         });
 
-        fit(`should successfully fill out and send a contact form`, async doneFunc => {
+        it(`should successfully fill out and send a contact form`, async doneFunc => {
             await browser.driver.get(`${baseUrl}/automation-contact-us-81536385932043467131/`);
 
             const uniqueString = v4();
@@ -101,7 +104,7 @@ describe("contact pages", () => {
 
             setInterval(async () => {
                 try{
-                    console.log(`Loading mails (${uniqueString})`);
+                    console.log(`Loading mails (unique: '${uniqueString}')`);
                     const response = await axios.get<IWebhookResponse>(`${webHookBase}requests?password=&page=1&sorting=newest`, { headers: { "Accept": "application/json", "Content-Type": "application/json" } });
 
                     const emails = response.data.data.filter(item => item.type === "email");
