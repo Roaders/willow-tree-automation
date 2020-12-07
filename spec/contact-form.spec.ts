@@ -1,4 +1,16 @@
 import { browser, By } from "protractor";
+import axios from "axios"
+import { v4 } from "uuid"
+
+interface IWebhookItem{
+    content: String;
+    type: "email";
+    text_content: string;
+}
+
+interface IWebhookResponse{
+    data: IWebhookItem[];
+}
 
 describe("contact pages", () => {
 
@@ -46,7 +58,7 @@ describe("contact pages", () => {
 
             const iframes = await browser.driver.findElements(By.tagName("iframe"));
             const capatchaIframe = iframes[iframes.length - 1];
-            
+
             const src = await capatchaIframe.getAttribute("src");
             expect(src.indexOf("https://www.google.com/recaptcha")).toBe(0);
             const tagName = await capatchaIframe.getTagName();
@@ -54,23 +66,66 @@ describe("contact pages", () => {
         })
     })
 
-    
+    const userMail = "25c66bda-03f2-41de-8657-b9a12f6f8647@email.webhook.site";
+    const webHookBase = "https://webhook.site/token/25c66bda-03f2-41de-8657-b9a12f6f8647/";
 
-    it(`should successfully fill out and send a contact form`, async () => {
-        await browser.driver.get(`${baseUrl}/automation-contact-us-81536385932043467131/`);
+    describe("contact form", () => {
+        let originalTimeout: number;
+        beforeEach(() => {
+            originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
+        });
 
-        await browser.driver.findElement(By.id("wpforms-436-field_0")).sendKeys("Automation");
-        await browser.driver.findElement(By.id("wpforms-436-field_0-last")).sendKeys("Tester");
-        await browser.driver.findElement(By.id("wpforms-436-field_1")).sendKeys("giles.roadnight@gmail.com");
-        await browser.driver.findElement(By.id("wpforms-436-field_2")).sendKeys(`Testing contact form on automation testing page`);
+        afterEach(() => {
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+        });
 
-        await browser.driver.findElement(By.id("wpforms-submit-436")).click();
+        fit(`should successfully fill out and send a contact form`, async doneFunc => {
+            await browser.driver.get(`${baseUrl}/automation-contact-us-81536385932043467131/`);
 
-        const confirmationChildren = await browser.driver.findElement(By.id("wpforms-confirmation-436")).findElements(By.tagName("div"));
-        const confirmationGrandChildren = await confirmationChildren[0].findElements(By.tagName("div"));
+            const uniqueString = v4();
 
-        const confirmText = await confirmationGrandChildren[0].getText();
+            await browser.driver.findElement(By.id("wpforms-436-field_0")).sendKeys("Automation");
+            await browser.driver.findElement(By.id("wpforms-436-field_0-last")).sendKeys("Tester");
+            await browser.driver.findElement(By.id("wpforms-436-field_1")).sendKeys(userMail);
+            await browser.driver.findElement(By.id("wpforms-436-field_2")).sendKeys(`Testing contact form on automation testing page (${uniqueString})`);
 
-        expect(confirmText).toBe("Thank you for contacting us.");
+            await browser.driver.findElement(By.id("wpforms-submit-436")).click();
+
+            const confirmationChildren = await browser.driver.findElement(By.id("wpforms-confirmation-436")).findElements(By.tagName("div"));
+            const confirmationGrandChildren = await confirmationChildren[0].findElements(By.tagName("div"));
+
+            const confirmText = await confirmationGrandChildren[0].getText();
+
+            expect(confirmText).toBe("Thank you for contacting us.");
+
+            setInterval(async () => {
+                try{
+                    console.log(`Loading mails (${uniqueString})`);
+                    const response = await axios.get<IWebhookResponse>(`${webHookBase}requests?password=&page=1&sorting=newest`, { headers: { "Accept": "application/json", "Content-Type": "application/json" } });
+
+                    const emails = response.data.data.filter(item => item.type === "email");
+                    const matchFound = emails.some(email => email.text_content.indexOf(uniqueString) > 0);
+                    console.log(`${emails.length} Mails loaded ${matchFound}`);
+
+                    if(!matchFound){
+                        return
+                    }
+
+                    expect(matchFound).toBe(true);
+                } catch(e){
+                    fail(`Error while loading requests: ${e}`)
+                }
+
+                try{
+                    console.log(`Deleting all mails`)
+                    await axios.delete(`${webHookBase}request?password=`, { headers: { "Accept": "application/json", "Content-Type": "application/json" } });
+                } catch(e){
+                    fail(`Error while deleting requests: ${e}`);
+                }
+
+                doneFunc();
+            }, 5000)
+        })
     })
 });
