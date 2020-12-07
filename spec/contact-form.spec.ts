@@ -51,7 +51,26 @@ describe("contact pages", () => {
             expect(src.indexOf("https://www.google.com/recaptcha")).toBe(0);
             const tagName = await capatchaIframe.getTagName();
             expect(tagName).toBe("iframe");
-
         })
+    })
+
+    
+
+    it(`should successfully fill out and send a contact form`, async () => {
+        await browser.driver.get(`${baseUrl}/automation-contact-us-81536385932043467131/`);
+
+        await browser.driver.findElement(By.id("wpforms-436-field_0")).sendKeys("Automation");
+        await browser.driver.findElement(By.id("wpforms-436-field_0-last")).sendKeys("Tester");
+        await browser.driver.findElement(By.id("wpforms-436-field_1")).sendKeys("giles.roadnight@gmail.com");
+        await browser.driver.findElement(By.id("wpforms-436-field_2")).sendKeys(`Testing contact form on automation testing page`);
+
+        await browser.driver.findElement(By.id("wpforms-submit-436")).click();
+
+        const confirmationChildren = await browser.driver.findElement(By.id("wpforms-confirmation-436")).findElements(By.tagName("div"));
+        const confirmationGrandChildren = await confirmationChildren[0].findElements(By.tagName("div"));
+
+        const confirmText = await confirmationGrandChildren[0].getText();
+
+        expect(confirmText).toBe("Thank you for contacting us.");
     })
 });
