@@ -86,6 +86,18 @@ describe("contact pages", () => {
         it(`should successfully fill out and send a contact form`, async doneFunc => {
             await browser.driver.get(`${baseUrl}/automation-contact-us-81536385932043467131/`);
 
+            const password = process.env.contactPassword;
+
+            if(password == null){
+                fail("process.env.contactPassword not defined");
+                doneFunc();
+                return;
+            }
+
+            await browser.driver.findElement(By.id("pwbox-437")).sendKeys(password);
+            const submitButton = await browser.driver.findElement(By.css('input[type="submit"]'));
+            await submitButton.click()
+
             const uniqueString = v4();
 
             await browser.driver.findElement(By.id("wpforms-436-field_0")).sendKeys("Automation");
