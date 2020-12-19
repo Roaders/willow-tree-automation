@@ -71,7 +71,7 @@ describe("contact pages", () => {
 
     describe("contact form", () => {
         let originalTimeout: number;
-        const overriddenTimeout = 60000;
+        const overriddenTimeout = 120000;
         beforeEach(() => {
             console.log(`Setting timeout to ${overriddenTimeout}`)
             originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -113,6 +113,8 @@ describe("contact pages", () => {
             const confirmText = await confirmationGrandChildren[0].getText();
 
             expect(confirmText).toBe("Thank you for contacting us.");
+
+            // webhooks site: https://webhook.site/#!/25c66bda-03f2-41de-8657-b9a12f6f8647/1c5299cb-347a-40cf-a62d-d6eaf21d59a4/1
 
             setInterval(async () => {
                 try{
